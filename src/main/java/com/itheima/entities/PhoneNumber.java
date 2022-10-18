@@ -1,5 +1,7 @@
 package com.itheima.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import javax.persistence.Table;
 
@@ -29,6 +31,7 @@ public class PhoneNumber {
 
     @ManyToOne
     @JoinColumn(name="idContact",nullable = true)
+    @JsonIgnore
     private Contact phone_contact;
     public long getPhone_id() {
         return phone_id;

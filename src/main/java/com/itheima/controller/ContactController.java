@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
+@CrossOrigin(origins = {"localhost:3000"})
 @RequestMapping("/contacts")
 public class ContactController {
 

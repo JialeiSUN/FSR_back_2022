@@ -18,9 +18,9 @@ public class Contact {
     private long idContact;
 
 
-    @OneToOne(mappedBy = "contact",cascade=CascadeType.ALL, fetch = FetchType.LAZY,orphanRemoval=true)
+    @OneToOne(mappedBy = "contact",cascade=CascadeType.ALL, fetch = FetchType.EAGER,orphanRemoval=true)
     @JoinColumn
-    @JsonIgnore
+
     private Address address;
 
     @Column
@@ -29,14 +29,12 @@ public class Contact {
     private String lastName;
     @Column
     private String email;
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "phone_contact")
-    @JsonIgnore
+    @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.EAGER, mappedBy = "phone_contact")
     private Set<PhoneNumber> phones = new HashSet<PhoneNumber>();
-    @ManyToMany(cascade=CascadeType.PERSIST)
+    @ManyToMany(cascade=CascadeType.PERSIST,fetch = FetchType.EAGER)
     @JoinTable(name="CTC_GRP",
             joinColumns=@JoinColumn(name="idContact"),
             inverseJoinColumns=@JoinColumn(name="idContactGroup"))
-    @JsonIgnore
     private Set<ContactGroup> contactGroupeList = new HashSet<ContactGroup>();
 
     public Set<ContactGroup> getContactGroupeList() {

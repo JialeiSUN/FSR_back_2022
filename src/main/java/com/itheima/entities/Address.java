@@ -22,6 +22,7 @@ public class Address {
     private String city;
     @OneToOne
     @JoinColumn(name="idContact",nullable = true)
+    @JsonIgnore
     private Contact contact;
     @Column
     private String zip;

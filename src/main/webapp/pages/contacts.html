@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+
+<html>
+
+    <head>
+
+        <!-- 页面meta -->
+
+        <meta charset="utf-8">
+
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+        <title>TestExample</title>
+
+        <meta content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" name="viewport">
+
+        <!-- 引入样式 -->
+
+        <link rel="stylesheet" href="../plugins/elementui/index.css">
+
+        <link rel="stylesheet" href="../plugins/font-awesome/css/font-awesome.min.css">
+
+        <link rel="stylesheet" href="../css/style.css">
+
+    </head>
+
+    <body class="hold-transition">
+
+        <div id="app">
+
+            <div class="content-header">
+
+                <h1>ContactManagement</h1>
+
+            </div>
+
+            <div class="app-container">
+
+                <div class="box">
+
+                    <div class="filter-container">
+
+                        <el-input placeholder="lastName" v-model="contactName" style="width: 200px;" class="filter-item"></el-input>
+
+                        <el-button @click="getAll()" class="dalfBut">Recherche</el-button>
+                        <el-button @click="getAllByName()" class="dalfBut">RechercheName</el-button>
+                        <el-button type="primary" class="butT" @click="handleCreate()">Nouveau</el-button>
+
+                    </div>
+
+                    <el-table size="small" current-row-key="idContact" :data="dataList" stripe highlight-current-row>
+
+                        <el-table-column type="index" align="center" label="idContact"></el-table-column>
+
+                        <el-table-column prop="lastName" label="lastName" align="center"></el-table-column>
+
+                        <el-table-column prop="firstName" label="firstName" align="center"></el-table-column>
+
+                        <el-table-column prop="email" label="E-mail" align="center"></el-table-column>
+
+                        <el-table-column label="Opération" align="center">
+
+                            <template slot-scope="scope">
+
+                                <el-button type="primary" size="mini" @click="handleUpdate(scope.row)">Modifier</el-button>
+
+                                <el-button type="danger" size="mini" @click="handleDelete(scope.row)">Supprimer</el-button>
+
+                            </template>
+
+                        </el-table-column>
+
+                    </el-table>
+
+
+                    <div class="add-form">
+
+                        <el-dialog title="nouveau contact" :visible.sync="dialogFormVisible">
+
+                            <el-form ref="dataAddForm" :model="formData" :rules="rules" label-position="right" label-width="100px">
+
+                                <el-row>
+
+                                    <el-col :span="12">
+
+                                        <el-form-item label="LastName" prop="lastName">
+
+                                            <el-input v-model="formData.lastName"/>
+
+                                        </el-form-item>
+
+                                    </el-col>
+
+                                    <el-col :span="12">
+
+                                        <el-form-item label="FirstName" prop="firstName">
+
+                                            <el-input v-model="formData.firstName"/>
+
+                                        </el-form-item>
+
+                                    </el-col>
+
+                                </el-row>
+
+
+                                <el-row>
+
+                                    <el-col :span="12">
+
+                                        <el-form-item label="E-mail">
+
+                                            <el-input v-model="formData.email"></el-input>
+
+                                        </el-form-item>
+
+                                    </el-col>
+
+                                </el-row>
+
+                            </el-form>
+
+                            <div slot="footer" class="dialog-footer">
+
+                                <el-button @click="dialogFormVisible = false">annuler</el-button>
+
+                                <el-button type="primary" @click="handleAdd()">valider</el-button>
+
+                            </div>
+
+                        </el-dialog>
+
+                    </div>
+
+
+                    <div class="add-form">
+
+                        <el-dialog title="modifier contact" :visible.sync="dialogFormVisible4Edit">
+
+                            <el-form ref="dataEditForm" :model="formData" :rules="rules" label-position="right" label-width="100px">
+
+                                <el-row>
+
+                                    <el-col :span="12">
+
+                                        <el-form-item label="LastName" prop="lastName">
+
+                                            <el-input v-model="formData.lastName"/>
+
+                                        </el-form-item>
+
+                                    </el-col>
+
+                                    <el-col :span="12">
+
+                                        <el-form-item label="FirstName" prop="firstName">
+
+                                            <el-input v-model="formData.firstName"/>
+
+                                        </el-form-item>
+
+                                    </el-col>
+
+                                </el-row>
+
+                                <el-row>
+
+                                    <el-col :span="12">
+
+                                        <el-form-item label="E-mail">
+
+                                            <el-input v-model="formData.email" ></el-input>
+
+                                        </el-form-item>
+
+                                    </el-col>
+
+                                </el-row>
+
+                            </el-form>
+
+                            <div slot="footer" class="dialog-footer">
+
+                                <el-button @click="dialogFormVisible4Edit = false">Annuler</el-button>
+
+                                <el-button type="primary" @click="handleEdit()">Valider</el-button>
+
+                            </div>
+
+                        </el-dialog>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </body>
+
+
+    <script src="../js/vue.js"></script>
+
+    <script src="../plugins/elementui/index.js"></script>
+
+    <script type="text/javascript" src="../js/jquery.min.js"></script>
+
+    <script src="../js/axios-0.18.0.js"></script>
+
+    <script>
+        var vue = new Vue({
+
+            el: '#app',
+            data:{
+                contactName:"",
+				dataList: [],
+                formData: {},
+                dialogFormVisible: false,
+                dialogFormVisible4Edit:false,
+                rules: {
+                    firstName: [{ required: true, message: 'first name*', trigger: 'blur' }],
+                    lastName: [{ required: true, message: ' last name*', trigger: 'blur' }]
+                }
+            },
+
+            created() {
+                this.getAll();
+            },
+
+            methods: {
+                getAll() {
+                    axios.get("/contacts").then((res)=>{
+                        this.dataList = res.data.data;
+                    });
+                },
+                getAllByName() {
+                   
+                    let contactName = this.contactName;
+                    axios.get("/contacts/byname/"+contactName).then((res)=>{
+                        this.dataList = res.data.data;
+                    });
+                },
+                handleCreate() {
+                    this.dialogFormVisible = true;
+                    this.resetForm();
+                },
+
+                resetForm() {
+                    this.formData = {};
+                },
+
+                handleAdd () {
+                    axios.post("/contacts",this.formData).then((res)=>{
+                        
+                        if(res.data.code == 20011){
+                            this.dialogFormVisible = false;
+                            this.$message.success("success");
+                        }else if(res.data.code == 20010){
+                            this.$message.error("fail");
+                        }else{
+                            this.$message.error(res.data.msg);
+                        }
+                    }).finally(()=>{
+                        this.getAll();
+                    });
+                },
+
+                handleUpdate(row) {
+                    console.log(row);
+                    axios.get("/contacts/"+row.idContact).then((res)=>{
+                        // console.log(res.data.data);
+                        if(res.data.code == 20041){
+                            this.formData = res.data.data;
+                            this.dialogFormVisible4Edit = true;
+                        }else{
+                            this.$message.error(res.data.msg);
+                        }
+                    });
+                },
+
+                handleEdit() {
+                    axios.put("/contacts",this.formData).then((res)=>{
+                        if(res.data.code == 20031){
+                            this.dialogFormVisible4Edit = false;
+                            this.$message.success("success");
+                        }else if(res.data.code == 20030){
+                            this.$message.error("fail");
+                        }else{
+                            this.$message.error(res.data.msg);
+                        }
+                    }).finally(()=>{
+                        this.getAll();
+                    });
+                },
+
+                handleDelete(row) {
+                    this.$confirm("continuer？","notification",{
+                        type:'info'
+                    }).then(()=>{
+                        axios.delete("/contacts/"+row.idContact).then((res)=>{
+                            if(res.data.code == 20021){
+                                this.$message.success("success");
+                            }else{
+                                this.$message.error("fail");
+                            }
+                        }).finally(()=>{
+                            this.getAll();
+                        });
+                    }).catch(()=>{
+                        this.$message.info("annuler");
+                    });
+                }
+            }
+        })
+
+    </script>
+
+</html>
