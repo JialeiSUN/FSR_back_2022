@@ -212,6 +212,48 @@
                         this.getAll();
                     });
                 },
+                handleAddPhone () {
+                    axios.post("/phone",this.phoneData).then((res)=>{
+                        if(res.data.code === 20011){
+                            this.dialogFormVisible = false;
+                            this.$message.success("success");
+                        }else if(res.data.code === 20010){
+                            this.$message.error("fail");
+                        }else{
+                            this.$message.error(res.data.msg);
+                        }
+                    }).finally(()=>{
+                        this.getAll();
+                    });
+                },
+                handleAddAddress(){
+                    axios.post("/address",this.addressData).then((res)=>{
+                        if(res.data.code === 20011){
+                            this.dialogFormVisible = false;
+                            this.$message.success("success");
+                        }else if(res.data.code === 20010){
+                            this.$message.error("fail");
+                        }else{
+                            this.$message.error(res.data.msg);
+                        }
+                    }).finally(()=>{
+                        this.getAll();
+                    });
+                },
+                Reaffiche(idContact) {
+                    this.id_contact = idContact;
+
+                    axios.get("/contacts/"+this.id_contact).then((res)=>{
+                        console.log(res.data.data);
+                        if(res.data.code === 20041){
+                            this.formData = res.data.data;
+                            //this.addressData = res.data.data.address;
+                            this.dialogFormVisible4Edit = true;
+                        }else{
+                            this.$message.error(res.data.msg);
+                        }
+                    });
+                },
                 handleUpdate(row) {
                     this.id_contact = row.idContact;
 

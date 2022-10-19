@@ -2,6 +2,7 @@ package com.itheima.controller;
 
 import com.itheima.entities.Address;
 import com.itheima.entities.Contact;
+import com.itheima.entities.ContactGroup;
 import com.itheima.entities.PhoneNumber;
 import com.itheima.service.AddressService;
 import com.itheima.service.ContactService;
@@ -20,9 +21,6 @@ public class ContactController {
     @Autowired
     private ContactService contactService;
 
-    @Autowired
-    private AddressService addressService;
-
     @PostMapping
     public  Result save(@RequestBody Contact contact){
         Contact contact1 = contactService.update(contact);
@@ -30,35 +28,40 @@ public class ContactController {
     }
     @PostMapping("/address/{id}")
     public Result addAddressByContactId(@PathVariable Long id, @RequestBody Address address) {
-        Contact contact = contactService.getById(id);
-        contact.setAddress(address);
-        Contact contact1 = contactService.save(contact);
+        Contact contact1 = contactService.addAddress(id,address);
         Integer code = contact1 != null ? Code.GET_OK : Code.GET_ERR;
         String msg = contact1 != null ? "Success" : "Error!";
         return new Result(contact1,code,msg);
     }
     @PutMapping("/address/{id}")
     public Result updateAddressByContactId(@PathVariable Long id, @RequestBody Address address) {
-        Contact contact = contactService.getById(id);
-        contact.setAddress(address);
-        address.setContact(contact);
-        Contact contact1 = contactService.save(contact);
+        Contact contact1 = contactService.updateAddress(id,address);
         Integer code = contact1 != null ? Code.GET_OK : Code.GET_ERR;
         String msg = contact1 != null ? "Success" : "Error!";
         return new Result(contact1,code,msg);
     }
-    @PutMapping("/phones/{id}")
-    public Result updatePhonesByContactId(@PathVariable Long id, @RequestBody Set<PhoneNumber> phones) {
-        Contact contact = contactService.getById(id);
-        contact.setPhones(phones);
-        phones.forEach((e) -> {
-           e.setPhone_contact(contact);
-        });
-        Contact contact1 = contactService.save(contact);
+    @PostMapping("/phone/{id}")
+    public Result addPhonesByContactId(@PathVariable Long id, @RequestBody PhoneNumber phoneNumber) {
+        Contact contact1 = contactService.addPhone(id,phoneNumber);
         Integer code = contact1 != null ? Code.GET_OK : Code.GET_ERR;
         String msg = contact1 != null ? "Success" : "Error!";
         return new Result(contact1,code,msg);
     }
+    @PutMapping("/groupes/{id}")
+    public Result updatePhonesByContactId(@PathVariable Long id, @RequestBody Set<ContactGroup> groups) {
+        Contact contact1 = contactService.updateGroups(id,groups);
+        Integer code = contact1 != null ? Code.GET_OK : Code.GET_ERR;
+        String msg = contact1 != null ? "Success" : "Error!";
+        return new Result(contact1,code,msg);
+    }
+    @PostMapping("/groupe/{id}")
+    public Result addContactGroupByContactId(@PathVariable Long id, @RequestBody ContactGroup contactGroup) {
+        Contact contact1 = contactService.addGroupe(id,contactGroup);
+        Integer code = contact1 != null ? Code.GET_OK : Code.GET_ERR;
+        String msg = contact1 != null ? "Success" : "Error!";
+        return new Result(contact1,code,msg);
+    }
+
     @PutMapping
     public  Result update(@RequestBody Contact contact){
         Contact contact1 = contactService.save(contact);
