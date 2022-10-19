@@ -48,7 +48,7 @@ public class ContactController {
         return new Result(contact1,code,msg);
     }
     @PutMapping("/groupes/{id}")
-    public Result updatePhonesByContactId(@PathVariable Long id, @RequestBody Set<ContactGroup> groups) {
+    public Result updateGroupsByContactId(@PathVariable Long id, @RequestBody Set<ContactGroup> groups) {
         Contact contact1 = contactService.updateGroups(id,groups);
         Integer code = contact1 != null ? Code.GET_OK : Code.GET_ERR;
         String msg = contact1 != null ? "Success" : "Error!";

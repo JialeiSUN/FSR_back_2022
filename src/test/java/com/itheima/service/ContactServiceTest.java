@@ -94,27 +94,25 @@ public class ContactServiceTest {
     }
     @Test
     public void testAddNewGroupe(){
-        Contact testContact1 = contactService.getById(2L);
-        Contact testContact3 = contactService.getById(1L);
+        Contact testContact3 = contactService.getById(11L);
+        ContactGroup testContactGroupe1 = contactGroupService.getById(3L);
+        ContactGroup testGroupe1 = contactGroupService.getById(1L);
 
         Set<ContactGroup> contactGroupList =new HashSet<ContactGroup>();
-        ContactGroup contactGroup = new ContactGroup();
-        contactGroup.setGroupName("testgroupe2");
-        ContactGroup testGroupe1 = contactGroupService.getById(1L);
-        contactGroupList.add(contactGroup);
+        Set<Contact> contactSet = new HashSet<Contact>();
+
+        contactSet.add(testContact3);
+        contactGroupList.add(testContactGroupe1);
         contactGroupList.add(testGroupe1);
 
-        testContact1.setContactGroupeList(contactGroupList);
-
-        testContact3.setContactGroupeList(contactGroupList);
-
-        Set<Contact> contactList =new HashSet<Contact>();
-        contactList.add(testContact1);
-        contactList.add(testContact3);
-        contactGroup.setContactList(contactList);
-        contactGroupService.save(contactGroup);
-        contactService.save(testContact1);
+        contactGroupList.forEach((e) -> {
+            e.setContactList(contactSet);
+        });
+        contactSet.forEach((e)->{
+            e.setContactGroupeList(contactGroupList);
+        });
         contactService.save(testContact3);
+
     }
     @Test
     public void testDeletePhoneNumber(){

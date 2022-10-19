@@ -17,6 +17,14 @@
                 <h1>ContactManagement</h1>
             </div>
             <div class="app-container">
+                <div v-if="groupeListGlobal" class="box">
+                    <el-table size="small" current-row-key="idContactGroup" :data="groupeListGlobal" stripe highlight-current-row>
+                        <el-table-column type="index" align="center" label="index"></el-table-column>
+                        <el-table-column prop="idContactGroup" label="id" align="center"></el-table-column>
+                        <el-table-column prop="groupName" label="Name" align="center"></el-table-column>
+                    </el-table>
+                </div>
+
                 <div class="box">
                     <div class="filter-container">
                         <el-input placeholder="lastName" v-model="contactName" style="width: 200px;" class="filter-item"></el-input>
@@ -31,6 +39,9 @@
                         <el-table-column prop="email" label="E-mail" align="center"></el-table-column>
                         <el-table-column label="Opération" align="center">
                             <template slot-scope="scope">
+                                <el-button type="primary" size="mini" @click="handleFormAddAddress(scope.row)">+A</el-button>
+                                <el-button type="primary" size="mini" @click="handleFormAddPhone(scope.row)">+P</el-button>
+                                <el-button type="primary" size="mini" @click="handleFormAddGroupe(scope.row)">+G</el-button>
                                 <el-button type="primary" size="mini" @click="handleUpdate(scope.row)">Modifier</el-button>
                                 <el-button type="danger" size="mini" @click="handleDelete(scope.row)">Supprimer</el-button>
                             </template>
@@ -66,6 +77,78 @@
                         </el-dialog>
                     </div>
                     <div class="add-form">
+                        <el-dialog title="nouveau phone" :visible.sync="dialogFormPhone">
+                            <el-form ref="dataAddForm" :model="phoneData" :rules="rules" label-position="right" label-width="100px">
+                                <el-col :span="8">
+                                    <el-form-item label="NB" prop="phoneNumber">
+                                        <el-input v-model="phoneData.phoneNumber"></el-input>
+                                    </el-form-item>
+                                </el-col>
+                                <el-col :span="8">
+                                    <el-form-item label="Type" prop="phoneType">
+                                        <el-input v-model="phoneData.phoneType"></el-input>
+                                    </el-form-item>
+                                </el-col>
+                            </el-form>
+                            <div slot="footer" class="dialog-footer">
+                                <el-button @click="dialogFormPhone = false">annuler</el-button>
+                                <el-button type="primary" @click="handleAddPhoneDansContact()">valider</el-button>
+                            </div>
+                        </el-dialog>
+                    </div>
+                    <div class="add-form">
+                        <el-dialog title="nouveau address" :visible.sync="dialogFormAddress">
+                            <el-form ref="dataAddForm" :model="addressData" :rules="rules" label-position="right" label-width="100px">
+                                <el-row>
+                                    <el-col :span="12">
+                                        <el-form-item label="city" prop="addressData.city">
+                                            <el-input v-model="addressData.city"></el-input>
+                                        </el-form-item>
+                                    </el-col>
+                                    <el-col :span="12">
+                                        <el-form-item label="country" prop="addressData.country">
+                                            <el-input v-model="addressData.country"></el-input>
+                                        </el-form-item>
+                                    </el-col>
+                                </el-row>
+                                <el-row>
+                                    <el-col :span="12">
+                                        <el-form-item label="street" prop="addressData.street">
+                                            <el-input v-model="addressData.street"></el-input>
+                                        </el-form-item>
+                                    </el-col>
+                                    <el-col :span="12">
+                                        <el-form-item label="zip" prop="addressData.zip">
+                                            <el-input v-model="addressData.zip"></el-input>
+                                        </el-form-item>
+                                    </el-col>
+                                </el-row>
+
+                            </el-form>
+                            <div slot="footer" class="dialog-footer">
+                                <el-button @click="dialogFormAddress = false">annuler</el-button>
+                                <el-button type="primary" @click="handleAddAddressDansContact()">valider</el-button>
+                            </div>
+                        </el-dialog>
+                    </div>
+                    <div class="add-form">
+                        <el-dialog title="nouveau Groupe" :visible.sync="dialogFormGroupe">
+                            <el-form ref="dataAddForm" :model="groupeData" label-position="right" label-width="100px">
+                                <el-row>
+                                    <el-col :span="12">
+                                        <el-form-item label="name" prop="groupeData.groupName">
+                                            <el-input v-model="groupeData.groupName"></el-input>
+                                        </el-form-item>
+                                    </el-col>
+                                </el-row>
+                            </el-form>
+                            <div slot="footer" class="dialog-footer">
+                                <el-button @click="dialogFormGroupe = false">annuler</el-button>
+                                <el-button type="primary" @click="handleAddGroupeDansContact()">valider</el-button>
+                            </div>
+                        </el-dialog>
+                    </div>
+                    <div class="add-form">
                         <el-dialog title="modifier contact" :visible.sync="dialogFormVisible4Edit">
                             <el-form ref="dataEditForm" :model="formData" :rules="rules" label-position="right" label-width="100px">
                                 <el-row>
@@ -93,40 +176,44 @@
                                 <el-button @click="dialogFormVisible4Edit = false">Annuler</el-button>
                                 <el-button type="primary" @click="handleEdit()">Valider</el-button>
                             </div>
-                            <div v-if="formData.address" class="add-form">
-                                <el-form :model="formData.address" label-position="right" label-width="60px">
+                            <div v-if="addressData" class="add-form">
+                                <el-form :model="addressData" label-position="right" label-width="100px">
                                     <p>Address</p>
                                     <el-row>
                                             <el-col :span="12">
-                                                <el-form-item label="city" prop="formData.address.city">
-                                                    <el-input v-model="formData.address.city"></el-input>
+                                                <el-form-item label="city" prop="addressData.city">
+                                                    <el-input v-model="addressData.city"></el-input>
                                                 </el-form-item>
                                             </el-col>
                                             <el-col :span="12">
                                                 <el-form-item label="country" prop="formData.address.country">
-                                                    <el-input v-model="formData.address.country"></el-input>
+                                                    <el-input v-model="addressData.country"></el-input>
                                                 </el-form-item>
                                             </el-col>
                                         </el-row>
                                         <el-row>
                                             <el-col :span="12">
                                                 <el-form-item label="street" prop="formData.address.street">
-                                                    <el-input v-model="formData.address.street"></el-input>
+                                                    <el-input v-model="addressData.street"></el-input>
                                                 </el-form-item>
                                             </el-col>
                                             <el-col :span="12">
                                                 <el-form-item label="zip" prop="formData.address.zip">
-                                                    <el-input v-model="formData.address.zip"></el-input>
+                                                    <el-input v-model="addressData.zip"></el-input>
                                                 </el-form-item>
                                             </el-col>
                                     </el-row>
                                     <el-row>
                                         <el-button type="primary" @click="handleEditAddress()">MAJ address</el-button>
                                     </el-row>
+                                    <el-row>
+                                        <el-button type="danger" @click="handleDeleteAddress()">- A</el-button>
+                                    </el-row>
                                 </el-form>
                             </div>
                             <div v-if="phoneList" class="add-form">
-                                <el-form :model="phoneList" label-position="right" label-width="60px">
+                                <p>Phones</p>
+                                <el-form :model="phoneList" label-position="right" label-width="100px">
                                     <el-row v-for = '(item,i) in phoneList' :key="i">
                                         <el-col :span="8">
                                             <el-form-item label="NB" prop="item.phoneNumber">
@@ -148,6 +235,25 @@
                                     <el-button type="primary" @click="handleEditPhones()">MAJ phones</el-button>
                                 </el-row>
                             </div>
+                            <div v-if="groupeList" class="add-form">
+                                <p>groupes</p>
+                                <el-form :model="groupeList" label-position="right" label-width="100px">
+                                    <el-row v-for = '(item,i) in groupeList' :key="i">
+                                        <el-col :span="12">
+                                            <el-form-item label="name" prop="item.groupName">
+                                                <el-input v-model="item.groupName"></el-input>
+                                            </el-form-item>
+                                        </el-col>
+                                        <el-col :span="4">
+                                            <el-button type="danger" size="mini" @click="handleDeleteGroup(item.idContactGroup)">x</el-button>
+                                        </el-col>
+                                    </el-row>
+
+                                </el-form>
+                                <el-row>
+                                    <el-button type="primary" @click="handleEditGroupes()">MAJ G</el-button>
+                                </el-row>
+                            </div>
                             
                         </el-dialog>
                     </div>
@@ -167,9 +273,17 @@
                 id_contact:0,
 				dataList: [],
                 phoneList: [],
+                groupeList: [],
+                groupeListGlobal:[],
                 formData: {},
+                phoneData: {},
+                addressData:{},
+                groupeData:{},
                 dialogFormVisible: false,
                 dialogFormVisible4Edit:false,
+                dialogFormPhone: false,
+                dialogFormAddress:false,
+                dialogFormGroupe: false,
                 rules: {
                     firstName: [{ required: true, message: 'first name*', trigger: 'blur' }],
                     lastName: [{ required: true, message: ' last name*', trigger: 'blur' }]
@@ -177,11 +291,17 @@
             },
             created() {
                 this.getAll();
+                this.getAllGroupe();
             },
             methods: {
                 getAll() {
                     axios.get("/contacts").then((res)=>{
                         this.dataList = res.data.data;
+                    });
+                },
+                getAllGroupe() {
+                    axios.get("/groupes").then((res)=>{
+                        this.groupeListGlobal = res.data.data;
                     });
                 },
                 getAllByName() {
@@ -212,8 +332,8 @@
                         this.getAll();
                     });
                 },
-                handleAddPhone () {
-                    axios.post("/phone",this.phoneData).then((res)=>{
+                handleAddPhoneDansContact () {
+                    axios.post("/contacts/phone/"+this.id_contact,this.phoneData).then((res)=>{
                         if(res.data.code === 20011){
                             this.dialogFormVisible = false;
                             this.$message.success("success");
@@ -226,8 +346,8 @@
                         this.getAll();
                     });
                 },
-                handleAddAddress(){
-                    axios.post("/address",this.addressData).then((res)=>{
+                handleAddAddressDansContact(){
+                    axios.post("/contacts/address/"+this.id_contact,this.addressData).then((res)=>{
                         if(res.data.code === 20011){
                             this.dialogFormVisible = false;
                             this.$message.success("success");
@@ -240,9 +360,21 @@
                         this.getAll();
                     });
                 },
-                Reaffiche(idContact) {
-                    this.id_contact = idContact;
-
+                handleAddGroupeDansContact(){
+                    axios.post("/contacts/groupe/"+this.id_contact,this.groupeData).then((res)=>{
+                        if(res.data.code === 20011){
+                            this.dialogFormVisible = false;
+                            this.$message.success("success");
+                        }else if(res.data.code === 20010){
+                            this.$message.error("fail");
+                        }else{
+                            this.$message.error(res.data.msg);
+                        }
+                    }).finally(()=>{
+                        this.getAll();
+                    });
+                },
+               reAffiche() {
                     axios.get("/contacts/"+this.id_contact).then((res)=>{
                         console.log(res.data.data);
                         if(res.data.code === 20041){
@@ -254,16 +386,28 @@
                         }
                     });
                 },
+                handleFormAddAddress(row){
+                    this.id_contact = row.idContact;
+                    this.dialogFormAddress = true;
+                },
+                handleFormAddPhone(row){
+                    this.id_contact = row.idContact;
+                    this.dialogFormPhone = true;
+                },
+                handleFormAddGroupe(row){
+                    this.id_contact = row.idContact;
+                    this.dialogFormGroupe = true;
+                },
                 handleUpdate(row) {
                     this.id_contact = row.idContact;
-
                     axios.get("/contacts/"+row.idContact).then((res)=>{
                          console.log(res.data.data);
                         if(res.data.code === 20041){
+                            //récupérer les données mieux façon est utiliser api get
                             this.formData = res.data.data;
                             this.phoneList = this.formData.phones;
-                            console.log(this.formData);
-                            //this.addressData = res.data.data.address;
+                            this.addressData = this.formData.address;
+                            this.groupeList = this.formData.contactGroupeList;
                             this.dialogFormVisible4Edit = true;
                         }else{
                             this.$message.error(res.data.msg);
@@ -271,9 +415,6 @@
                     });
                 },
                 handleEdit() {
-                    
-                   // this.formData.address.idContact = this.id_contact;
-                    //console.log(this.formData);
                     axios.put("/contacts",this.formData).then((res)=>{
                         if(res.data.code === 20031){
                             this.dialogFormVisible4Edit = false;
@@ -289,10 +430,7 @@
                   
                 },
                 handleEditAddress() {
-                    
-                    // this.formData.address.idContact = this.id_contact;
-                     //console.log(this.formData);
-                     axios.put("/contacts/address/"+this.formData.idContact,this.formData.address).then((res)=>{
+                     axios.put("/contacts/address/"+this.id_contact,this.addressData).then((res)=>{
                          if(res.data.code === 20031){
                              this.dialogFormVisible4Edit = false;
                              this.$message.success("success");
@@ -302,15 +440,12 @@
                              this.$message.error(res.data.msg);
                          }
                      }).finally(()=>{
-                         this.getAll();
+                         this.reAffiche();
                      });
                    
                  },
                  handleEditPhones() {
-                    
-                    // this.formData.address.idContact = this.id_contact;
-                     //console.log(this.formData);
-                     axios.put("/contacts/phones/"+this.formData.idContact,this.phoneList).then((res)=>{
+                     axios.put("/contacts/phones/"+this.id_contact,this.phoneList).then((res)=>{
                          if(res.data.code === 20031){
                              this.dialogFormVisible4Edit = false;
                              this.$message.success("success");
@@ -320,10 +455,37 @@
                              this.$message.error(res.data.msg);
                          }
                      }).finally(()=>{
-                         this.getAll();
+                         this.reAffiche();
                      });
                    
                  },
+                handleEditGroupes() {
+                    axios.put("/contacts/gropes/"+this.id_contact,this.groupeList).then((res)=>{
+                        if(res.data.code === 20031){
+                            this.dialogFormVisible4Edit = false;
+                            this.$message.success("success");
+                        }else if(res.data.code === 20030){
+                            this.$message.error("fail");
+                        }else{
+                            this.$message.error(res.data.msg);
+                        }
+                    }).finally(()=>{
+                        this.reAffiche();
+                    });
+
+                },
+                handleDeleteAddress(address_id){
+                    axios.delete("/address/"+address_id).then((res)=>{
+                        if(res.data.code === 20021){
+                            this.$message.success("success");
+                        }else{
+                            this.$message.error("fail");
+                        }
+                    }).finally(()=>{
+                        this.reAffiche();
+                    });
+
+                },
                  handleDeletePhone(phone_id){
                     axios.delete("/phones/"+phone_id).then((res)=>{
                             if(res.data.code === 20021){
@@ -333,9 +495,23 @@
                             }
                         }).finally(()=>{
                           console.log("delete phone finish");
+                        this.reAffiche();
                         });
 
                  },
+                handleDeleteGroup(idContactGroup){
+                    axios.delete("/groupes/"+idContactGroup).then((res)=>{
+                        if(res.data.code === 20021){
+                            this.$message.success("success");
+                        }else{
+                            this.$message.error("fail");
+                        }
+                    }).finally(()=>{
+                        console.log("delete group finish");
+                        this.reAffiche();
+                    });
+
+                },
                 handleDelete(row) {
                     this.$confirm("continuer？","notification",{
                         type:'info'

@@ -31,7 +31,7 @@ public class Contact {
     @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.EAGER, mappedBy = "phone_contact")
 
     private Set<PhoneNumber> phones = new HashSet<PhoneNumber>();
-    @ManyToMany(cascade=CascadeType.PERSIST,fetch = FetchType.EAGER)
+    @ManyToMany(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
     @JoinTable(name="CTC_GRP",
             joinColumns=@JoinColumn(name="idContact"),
             inverseJoinColumns=@JoinColumn(name="idContactGroup"))

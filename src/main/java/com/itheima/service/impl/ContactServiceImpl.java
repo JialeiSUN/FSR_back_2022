@@ -74,12 +74,14 @@ public class ContactServiceImpl implements ContactService {
         Contact contact = contactDao.findById(id).get();
 
         Set<Contact> contactList = contactGroup.getContactList();
-        contactList.add(contact);
-        contactGroup.setContactList(contactList);
-
         Set<ContactGroup> groupList = contact.getContactGroupeList();
+
+        contactList.add(contact);
         groupList.add(contactGroup);
+
+        contactGroup.setContactList(contactList);
         contact.setContactGroupeList(groupList);
+
         return  contactDao.save(contact);
     }
 
