@@ -20,7 +20,7 @@ public class Address {
     private String street;
     @Column
     private String city;
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="idContact",nullable = true)
     @JsonIgnore
     private Contact contact;

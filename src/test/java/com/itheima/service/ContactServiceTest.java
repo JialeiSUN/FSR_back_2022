@@ -13,12 +13,14 @@ import java.util.*;
 
 @ContextConfiguration(classes = SpringConfig.class)
 @RunWith(SpringJUnit4ClassRunner.class)
-public class BookServiceTest {
+public class ContactServiceTest {
+    @Autowired
+    private ContactService contactService;
+    @Autowired
+    private ContactGroupService contactGroupService;
 
-    @Autowired//pour chaque bean
-    ContractService contractService;
-    @Autowired//pour chaque bean
-    ContactGroupService contactGroupService;
+    @Autowired
+    private  PhoneNumberService phoneNumberService;
     @Test
     public void testC_contact_address(){
         //contact
@@ -58,7 +60,7 @@ public class BookServiceTest {
 
         // ajouter l'adresse dans contact
         testContact.setAddress(testAddress);
-        contractService.save(testContact);
+        contactService.save(testContact);
     }
     @Test
     public void testInser(){
@@ -66,14 +68,12 @@ public class BookServiceTest {
         testContact2.setEmail("test@gmail.com");
         testContact2.setLastName("test2");
         testContact2.setFirstName("test2");
-        contractService.save(testContact2);
+        contactService.save(testContact2);
     }
     @Test
     public void test_Group_contact(){
-        Optional<Contact> testContact = contractService.findById(2L);
-        Contact testContact1 = testContact.get();
-        Optional<Contact> testContact2 = contractService.findById(1L);
-        Contact testContact3 = testContact2.get();
+        Contact testContact1 = contactService.getById(2L);
+        Contact testContact3 = contactService.getById(1L);
 
         Set<ContactGroup> contactGroupList =new HashSet<ContactGroup>();
         ContactGroup contactGroup = new ContactGroup();
@@ -89,20 +89,18 @@ public class BookServiceTest {
         contactList.add(testContact3);
         contactGroup.setContactList(contactList);
         contactGroupService.save(contactGroup);
-        contractService.save(testContact1);
-        contractService.save(testContact3);
+        contactService.save(testContact1);
+        contactService.save(testContact3);
     }
     @Test
     public void testAddNewGroupe(){
-        Optional<Contact> testContact = contractService.findById(2L);
-        Contact testContact1 = testContact.get();
-        Optional<Contact> testContact2 = contractService.findById(1L);
-        Contact testContact3 = testContact2.get();
+        Contact testContact1 = contactService.getById(2L);
+        Contact testContact3 = contactService.getById(1L);
 
         Set<ContactGroup> contactGroupList =new HashSet<ContactGroup>();
         ContactGroup contactGroup = new ContactGroup();
         contactGroup.setGroupName("testgroupe2");
-        ContactGroup testGroupe1 = contactGroupService.findById(1L).get();
+        ContactGroup testGroupe1 = contactGroupService.getById(1L);
         contactGroupList.add(contactGroup);
         contactGroupList.add(testGroupe1);
 
@@ -115,7 +113,11 @@ public class BookServiceTest {
         contactList.add(testContact3);
         contactGroup.setContactList(contactList);
         contactGroupService.save(contactGroup);
-        contractService.save(testContact1);
-        contractService.save(testContact3);
+        contactService.save(testContact1);
+        contactService.save(testContact3);
+    }
+    @Test
+    public void testDeletePhoneNumber(){
+        phoneNumberService.deleteById(3L);
     }
 }

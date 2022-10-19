@@ -2,11 +2,14 @@ package com.itheima.service;
 
 import com.itheima.entities.Address;
 import com.itheima.entities.Contact;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
-import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
-public interface AddressService extends CrudRepository<Address,Long> {
+public interface AddressService {
+    public Address save(Address address);
+    public Address update(Address address);
+    public boolean deleteById(Long id);
+    public  Address getById(Long id);
+    public  List<Address> getAll();
 }

@@ -20,7 +20,6 @@ public class Contact {
 
     @OneToOne(mappedBy = "contact",cascade=CascadeType.ALL, fetch = FetchType.EAGER,orphanRemoval=true)
     @JoinColumn
-
     private Address address;
 
     @Column
@@ -30,6 +29,7 @@ public class Contact {
     @Column
     private String email;
     @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.EAGER, mappedBy = "phone_contact")
+
     private Set<PhoneNumber> phones = new HashSet<PhoneNumber>();
     @ManyToMany(cascade=CascadeType.PERSIST,fetch = FetchType.EAGER)
     @JoinTable(name="CTC_GRP",

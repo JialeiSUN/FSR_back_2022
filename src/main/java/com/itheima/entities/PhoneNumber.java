@@ -29,7 +29,7 @@ public class PhoneNumber {
         this.phone_contact = phone_contact;
     }
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="idContact",nullable = true)
     @JsonIgnore
     private Contact phone_contact;

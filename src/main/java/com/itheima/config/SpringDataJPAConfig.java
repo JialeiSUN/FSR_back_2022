@@ -15,7 +15,7 @@ import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 
 @Configuration // cité le class bean
-@EnableJpaRepositories(basePackages = "com.itheima.service") // démarrer jpa
+@EnableJpaRepositories(basePackages = "com.itheima.dao") // démarrer jpa
 @EnableTransactionManagement // démarrer event
 public class SpringDataJPAConfig {
     @Value("${jdbc.driver}")

@@ -1,220 +1,172 @@
 <!DOCTYPE html>
-
-<html>
-
+<html lang="fr">
     <head>
-
         <!-- 页面meta -->
-
         <meta charset="utf-8">
-
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
-
         <title>TestExample</title>
-
         <meta content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" name="viewport">
-
         <!-- 引入样式 -->
-
         <link rel="stylesheet" href="../plugins/elementui/index.css">
-
         <link rel="stylesheet" href="../plugins/font-awesome/css/font-awesome.min.css">
-
         <link rel="stylesheet" href="../css/style.css">
-
     </head>
-
     <body class="hold-transition">
-
         <div id="app">
-
             <div class="content-header">
-
                 <h1>ContactManagement</h1>
-
             </div>
-
             <div class="app-container">
-
                 <div class="box">
-
                     <div class="filter-container">
-
                         <el-input placeholder="lastName" v-model="contactName" style="width: 200px;" class="filter-item"></el-input>
-
-                        <el-button @click="getAll()" class="dalfBut">Recherche</el-button>
+                        <el-button @click="getAll()" class="dalfBut">Refresh</el-button>
                         <el-button @click="getAllByName()" class="dalfBut">RechercheName</el-button>
                         <el-button type="primary" class="butT" @click="handleCreate()">Nouveau</el-button>
-
                     </div>
-
                     <el-table size="small" current-row-key="idContact" :data="dataList" stripe highlight-current-row>
-
                         <el-table-column type="index" align="center" label="idContact"></el-table-column>
-
                         <el-table-column prop="lastName" label="lastName" align="center"></el-table-column>
-
                         <el-table-column prop="firstName" label="firstName" align="center"></el-table-column>
-
                         <el-table-column prop="email" label="E-mail" align="center"></el-table-column>
-
                         <el-table-column label="Opération" align="center">
-
                             <template slot-scope="scope">
-
                                 <el-button type="primary" size="mini" @click="handleUpdate(scope.row)">Modifier</el-button>
-
                                 <el-button type="danger" size="mini" @click="handleDelete(scope.row)">Supprimer</el-button>
-
                             </template>
-
                         </el-table-column>
-
                     </el-table>
-
-
                     <div class="add-form">
-
                         <el-dialog title="nouveau contact" :visible.sync="dialogFormVisible">
-
                             <el-form ref="dataAddForm" :model="formData" :rules="rules" label-position="right" label-width="100px">
-
                                 <el-row>
-
                                     <el-col :span="12">
-
                                         <el-form-item label="LastName" prop="lastName">
-
-                                            <el-input v-model="formData.lastName"/>
-
+                                            <el-input v-model="formData.lastName"></el-input>
                                         </el-form-item>
-
                                     </el-col>
-
                                     <el-col :span="12">
-
                                         <el-form-item label="FirstName" prop="firstName">
-
-                                            <el-input v-model="formData.firstName"/>
-
+                                            <el-input v-model="formData.firstName"></el-input>
                                         </el-form-item>
-
                                     </el-col>
-
                                 </el-row>
-
-
                                 <el-row>
-
                                     <el-col :span="12">
-
                                         <el-form-item label="E-mail">
-
                                             <el-input v-model="formData.email"></el-input>
-
                                         </el-form-item>
-
                                     </el-col>
-
                                 </el-row>
-
                             </el-form>
-
                             <div slot="footer" class="dialog-footer">
-
                                 <el-button @click="dialogFormVisible = false">annuler</el-button>
-
                                 <el-button type="primary" @click="handleAdd()">valider</el-button>
-
                             </div>
-
                         </el-dialog>
-
                     </div>
-
-
                     <div class="add-form">
-
                         <el-dialog title="modifier contact" :visible.sync="dialogFormVisible4Edit">
-
                             <el-form ref="dataEditForm" :model="formData" :rules="rules" label-position="right" label-width="100px">
-
                                 <el-row>
-
                                     <el-col :span="12">
-
                                         <el-form-item label="LastName" prop="lastName">
-
-                                            <el-input v-model="formData.lastName"/>
-
+                                            <el-input v-model="formData.lastName"></el-input>
                                         </el-form-item>
-
                                     </el-col>
-
                                     <el-col :span="12">
-
-                                        <el-form-item label="FirstName" prop="firstName">
-
-                                            <el-input v-model="formData.firstName"/>
-
+                                        <el-form-item label="FirstName" prop="firstname">
+                                            <el-input v-model="formData.firstName"></el-input>
                                         </el-form-item>
-
                                     </el-col>
-
                                 </el-row>
-
                                 <el-row>
-
                                     <el-col :span="12">
-
                                         <el-form-item label="E-mail">
-
                                             <el-input v-model="formData.email" ></el-input>
-
                                         </el-form-item>
-
                                     </el-col>
-
                                 </el-row>
-
+    
                             </el-form>
-
                             <div slot="footer" class="dialog-footer">
-
                                 <el-button @click="dialogFormVisible4Edit = false">Annuler</el-button>
-
                                 <el-button type="primary" @click="handleEdit()">Valider</el-button>
-
                             </div>
-
+                            <div v-if="formData.address" class="add-form">
+                                <el-form :model="formData.address" label-position="right" label-width="60px">
+                                    <p>Address</p>
+                                    <el-row>
+                                            <el-col :span="12">
+                                                <el-form-item label="city" prop="formData.address.city">
+                                                    <el-input v-model="formData.address.city"></el-input>
+                                                </el-form-item>
+                                            </el-col>
+                                            <el-col :span="12">
+                                                <el-form-item label="country" prop="formData.address.country">
+                                                    <el-input v-model="formData.address.country"></el-input>
+                                                </el-form-item>
+                                            </el-col>
+                                        </el-row>
+                                        <el-row>
+                                            <el-col :span="12">
+                                                <el-form-item label="street" prop="formData.address.street">
+                                                    <el-input v-model="formData.address.street"></el-input>
+                                                </el-form-item>
+                                            </el-col>
+                                            <el-col :span="12">
+                                                <el-form-item label="zip" prop="formData.address.zip">
+                                                    <el-input v-model="formData.address.zip"></el-input>
+                                                </el-form-item>
+                                            </el-col>
+                                    </el-row>
+                                    <el-row>
+                                        <el-button type="primary" @click="handleEditAddress()">MAJ address</el-button>
+                                    </el-row>
+                                </el-form>
+                            </div>
+                            <div v-if="phoneList" class="add-form">
+                                <el-form :model="phoneList" label-position="right" label-width="60px">
+                                    <el-row v-for = '(item,i) in phoneList' :key="i">
+                                        <el-col :span="8">
+                                            <el-form-item label="NB" prop="item.phoneNumber">
+                                                <el-input v-model="item.phoneNumber"></el-input>
+                                            </el-form-item>
+                                        </el-col>
+                                        <el-col :span="8">
+                                            <el-form-item label="Type" prop="item.phoneType">
+                                                <el-input v-model="item.phoneType"></el-input>
+                                            </el-form-item>
+                                        </el-col>
+                                        <el-col :span="4">
+                                            <el-button type="danger" size="mini" @click="handleDeletePhone(item.phone_id)">x</el-button>
+                                        </el-col>
+                                    </el-row>
+                                    
+                                </el-form>
+                                <el-row>
+                                    <el-button type="primary" @click="handleEditPhones()">MAJ phones</el-button>
+                                </el-row>
+                            </div>
+                            
                         </el-dialog>
-
                     </div>
-
                 </div>
-
             </div>
-
         </div>
-
     </body>
-
-
     <script src="../js/vue.js"></script>
-
     <script src="../plugins/elementui/index.js"></script>
-
     <script type="text/javascript" src="../js/jquery.min.js"></script>
-
     <script src="../js/axios-0.18.0.js"></script>
-
     <script>
         var vue = new Vue({
-
             el: '#app',
             data:{
                 contactName:"",
+                id_contact:0,
 				dataList: [],
+                phoneList: [],
                 formData: {},
                 dialogFormVisible: false,
                 dialogFormVisible4Edit:false,
@@ -223,11 +175,9 @@
                     lastName: [{ required: true, message: ' last name*', trigger: 'blur' }]
                 }
             },
-
             created() {
                 this.getAll();
             },
-
             methods: {
                 getAll() {
                     axios.get("/contacts").then((res)=>{
@@ -235,7 +185,6 @@
                     });
                 },
                 getAllByName() {
-                   
                     let contactName = this.contactName;
                     axios.get("/contacts/byname/"+contactName).then((res)=>{
                         this.dataList = res.data.data;
@@ -245,18 +194,16 @@
                     this.dialogFormVisible = true;
                     this.resetForm();
                 },
-
                 resetForm() {
                     this.formData = {};
+                    this.addressData = {};
                 },
-
                 handleAdd () {
                     axios.post("/contacts",this.formData).then((res)=>{
-                        
-                        if(res.data.code == 20011){
+                        if(res.data.code === 20011){
                             this.dialogFormVisible = false;
                             this.$message.success("success");
-                        }else if(res.data.code == 20010){
+                        }else if(res.data.code === 20010){
                             this.$message.error("fail");
                         }else{
                             this.$message.error(res.data.msg);
@@ -265,26 +212,31 @@
                         this.getAll();
                     });
                 },
-
                 handleUpdate(row) {
-                    console.log(row);
+                    this.id_contact = row.idContact;
+
                     axios.get("/contacts/"+row.idContact).then((res)=>{
-                        // console.log(res.data.data);
-                        if(res.data.code == 20041){
+                         console.log(res.data.data);
+                        if(res.data.code === 20041){
                             this.formData = res.data.data;
+                            this.phoneList = this.formData.phones;
+                            console.log(this.formData);
+                            //this.addressData = res.data.data.address;
                             this.dialogFormVisible4Edit = true;
                         }else{
                             this.$message.error(res.data.msg);
                         }
                     });
                 },
-
                 handleEdit() {
+                    
+                   // this.formData.address.idContact = this.id_contact;
+                    //console.log(this.formData);
                     axios.put("/contacts",this.formData).then((res)=>{
-                        if(res.data.code == 20031){
+                        if(res.data.code === 20031){
                             this.dialogFormVisible4Edit = false;
                             this.$message.success("success");
-                        }else if(res.data.code == 20030){
+                        }else if(res.data.code === 20030){
                             this.$message.error("fail");
                         }else{
                             this.$message.error(res.data.msg);
@@ -292,14 +244,62 @@
                     }).finally(()=>{
                         this.getAll();
                     });
+                  
                 },
+                handleEditAddress() {
+                    
+                    // this.formData.address.idContact = this.id_contact;
+                     //console.log(this.formData);
+                     axios.put("/contacts/address/"+this.formData.idContact,this.formData.address).then((res)=>{
+                         if(res.data.code === 20031){
+                             this.dialogFormVisible4Edit = false;
+                             this.$message.success("success");
+                         }else if(res.data.code === 20030){
+                             this.$message.error("fail");
+                         }else{
+                             this.$message.error(res.data.msg);
+                         }
+                     }).finally(()=>{
+                         this.getAll();
+                     });
+                   
+                 },
+                 handleEditPhones() {
+                    
+                    // this.formData.address.idContact = this.id_contact;
+                     //console.log(this.formData);
+                     axios.put("/contacts/phones/"+this.formData.idContact,this.phoneList).then((res)=>{
+                         if(res.data.code === 20031){
+                             this.dialogFormVisible4Edit = false;
+                             this.$message.success("success");
+                         }else if(res.data.code === 20030){
+                             this.$message.error("fail");
+                         }else{
+                             this.$message.error(res.data.msg);
+                         }
+                     }).finally(()=>{
+                         this.getAll();
+                     });
+                   
+                 },
+                 handleDeletePhone(phone_id){
+                    axios.delete("/phones/"+phone_id).then((res)=>{
+                            if(res.data.code === 20021){
+                                this.$message.success("success");
+                            }else{
+                                this.$message.error("fail");
+                            }
+                        }).finally(()=>{
+                          console.log("delete phone finish");
+                        });
 
+                 },
                 handleDelete(row) {
                     this.$confirm("continuer？","notification",{
                         type:'info'
                     }).then(()=>{
                         axios.delete("/contacts/"+row.idContact).then((res)=>{
-                            if(res.data.code == 20021){
+                            if(res.data.code === 20021){
                                 this.$message.success("success");
                             }else{
                                 this.$message.error("fail");
@@ -313,7 +313,5 @@
                 }
             }
         })
-
     </script>
-
 </html>
